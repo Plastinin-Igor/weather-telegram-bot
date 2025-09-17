@@ -101,15 +101,6 @@ public class WeatherData {
         @JsonProperty("grnd_level")
         private int grndLevel;
 
-        public String toStringMain() {
-            return "Температура: " + temp + "°C" +
-                   "\nОщущается как: " + feelsLike + "°C" +
-                   "\nМинимум: " + tempMin + "°C" +
-                   "\nМаксимум: " + tempMax + "°C" +
-                   "\nДавление: " + pressure + " мм.р.ст." +
-                   "\nВлажность воздуха :" + humidity + "%";
-        }
-
     }
 
     @Data

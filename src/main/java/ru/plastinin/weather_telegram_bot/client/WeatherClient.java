@@ -23,9 +23,10 @@ public class WeatherClient {
     @Value("${openweathermap.apiKeys}")
     private String apiKeys;
 
-    public Optional<String> getOpenWeatherMapData(String cityName) throws ServiceException {
+
+    public Optional<String> getOpenWeatherMapData(double lat, double lon) throws ServiceException {
         Request request = new Request.Builder()
-                .url(urlBuilder(cityName))
+                .url(urlBuilder(lat, lon))
                 .build();
 
         try (var response = client.newCall(request).execute()) {
@@ -37,19 +38,19 @@ public class WeatherClient {
     }
 
 
-    //TODO список параметров необходимо расширить.
-
     // Сборка URL по параметрам
-    private HttpUrl urlBuilder(String cityName) {
+    private HttpUrl urlBuilder(double lat, double lon) {
         HttpUrl baseUrl = HttpUrl.parse(openweathermapUrl);
         if (baseUrl != null) {
             return baseUrl.newBuilder()
-                    .addQueryParameter("q", cityName)
-                    .addQueryParameter("APPID", apiKeys)
+                    .addQueryParameter("lat", String.valueOf(lat))
+                    .addQueryParameter("lon", String.valueOf(lon))
+                    .addQueryParameter("appid", apiKeys)
                     .addQueryParameter("units", "metric")
+                    .addQueryParameter("lang", "ru")
                     .build();
         } else {
-            throw new IllegalArgumentException("Ошибка добавления параметра: " + cityName + " в url.");
+            throw new IllegalArgumentException("Error adding parameters to URL");
         }
     }
 
