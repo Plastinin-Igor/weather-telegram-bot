@@ -39,7 +39,6 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        String message = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
         String userName = update.getMessage().getChat().getUserName();
 
@@ -57,6 +56,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             if (!update.hasMessage() || !msg.hasText()) {
                 return;
             }
+            String message = update.getMessage().getText();
             switch (message) {
                 case START -> {
                     startCommand(chatId, userName);
@@ -68,7 +68,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
                 }
                 default -> {
                     sendMessage(chatId, "Команда не поддерживается");
-                    log.info("Команда не поддерживается username: {}, chatId: {}.", userName, chatId);
+                    log.info("The command is not supported. Username: {}, chatId: {}.", userName, chatId);
                 }
             }
         }
@@ -83,7 +83,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
     private void startCommand(Long chatId, String userName) {
         String text = """
                 ☁️ 🌦️ 🌧️ 🌞 🌩️ ⛅ ❄️ 🌡️ 🌫️ ✨
-                %s, добро пожаловать в бот!
+                @%s, добро пожаловать в бот!
                 Здесь вы сможете узнать текущую погоду по геолокации
                 
                 Для получения информации о погоде отправьте точку Геопозиции (геолокация 📍 «Location»).
@@ -113,19 +113,19 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
                 
                 Для получения информации:
                 
-                1. Нажмите на поле ввода сообщения внизу экрана 🖥️.
-                2. Выберите значок скрепки 📎.
-                3. Найдите пункт "Геопозиция" 📌 или «Местоположение» 📍.
-                4. Разрешите приложению доступ к вашей геолокации, если потребуется ✅.
-                5. После появления вашего текущего положения нажмите кнопку отправки "Отправить выбранную геопозицию" 🚀.
-                6. В ответ на вашу геопозицию придет сообщение, в котором будет краткая погодная сводка 📝📊 .
+                🖥️ Нажмите на поле ввода сообщения внизу экрана ️.
+                📎 Выберите значок скрепки.
+                📍 Найдите пункт "Геопозиция" или "Местоположение".
+                ✅ Разрешите приложению доступ к вашей геолокации, если потребуется.
+                🚀 После появления вашего текущего положения нажмите "Отправить выбранную геопозицию".
+                📝 В ответ на вашу геопозицию придет сообщение, в котором будет краткая погодная сводка.
                 
                 Команды:
                 Начало работы 🚀 /start
                 Справка 🔍 /help
                 
                 
-                Источником данных является сервис OpenWeatherMap org
+                Источником данных является сервис OpenWeatherMap
                 
                 OpenWeatherMap - один из популярных API сервисов для получения информации о погоде в реальном времени.
                 Подробнее о сервисе смотрите на официальном сайте 🌐 https://openweathermap.org/.
@@ -139,7 +139,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             String data = service.getWeather(lat, lon);
             sendMessage(chatId, data);
         } catch (ServiceException e) {
-            LOG.error("Error: {}", e.getMessage());
+            LOG.error("An error occurred while generating the weather report: {}", e.getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            LOG.error("Ошибка отправки сообщения", e);
+            LOG.error("Error sending message", e);
         }
     }
 
