@@ -50,7 +50,8 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             getWeather(chatId, latitude, longitude);
-            log.info("Geo Location from username: {}, chatId: {}.", userName, chatId);
+            log.info("Geo Location from username: {}, chatId: {}. Location: lat: {}, long: {}",
+                    userName, chatId, latitude, longitude);
         } else {
             // Обработка текстовых сообщений
             if (!update.hasMessage() || !msg.hasText()) {

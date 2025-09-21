@@ -1,9 +1,11 @@
 package ru.plastinin.weather_telegram_bot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherData {
 
     @JsonProperty("coord")
@@ -23,6 +25,12 @@ public class WeatherData {
 
     @JsonProperty("wind")
     private Wind wind;
+
+    @JsonProperty("rain")
+    private Rain rain;
+
+    @JsonProperty("snow")
+    private Snow snow;
 
     @JsonProperty("clouds")
     private Clouds clouds;
@@ -141,5 +149,17 @@ public class WeatherData {
         @JsonProperty("sunset")
         private long sunset;
 
+    }
+
+    @Data
+    public static class Rain {
+        @JsonProperty("1h")
+        private double oneHour;
+    }
+
+    @Data
+    public static class Snow {
+        @JsonProperty("1h")
+        private double oneHour;
     }
 }
