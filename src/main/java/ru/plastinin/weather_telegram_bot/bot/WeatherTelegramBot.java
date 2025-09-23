@@ -13,8 +13,10 @@ import org.telegram.telegrambots.meta.api.objects.Location;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.plastinin.weather_telegram_bot.client.GigaChatClientForBot;
 import ru.plastinin.weather_telegram_bot.exception.ServiceException;
 import ru.plastinin.weather_telegram_bot.service.WeatherService;
+import ru.plastinin.weather_telegram_bot.service.WeatherServiceAI;
 
 @Component
 @Slf4j
@@ -23,9 +25,15 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
     @Autowired
     WeatherService service;
 
+    @Autowired
+    WeatherServiceAI serviceAI;
+
+    @Autowired
+    GigaChatClientForBot gigaChat;
+
     private static final String START = "/start";
-    private static final String MOSCOW = "/moscow";
     private static final String HELP = "/help";
+    private static final String AI = "/ai";
 
     private static final Logger LOG = LoggerFactory.getLogger(WeatherTelegramBot.class);
 
@@ -49,7 +57,15 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             Location location = msg.getLocation();
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
+            // Погода из json-файла
             getWeather(chatId, latitude, longitude);
+            String text = """
+                    🤖 Далее на связи нейросеть GigaChat, и ей есть, что сказать (но это не точно) 👇
+                    """;
+            sendMessage(chatId, text);
+            // Данные из json-файла проанализированы нейросетью
+            getWeatherAi(chatId, latitude, longitude);
+
             log.info("Geo Location from username: {}, chatId: {}. Location: lat: {}, long: {}",
                     userName, chatId, latitude, longitude);
         } else {
@@ -141,6 +157,15 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             sendMessage(chatId, data);
         } catch (ServiceException e) {
             LOG.error("An error occurred while generating the weather report: {}", e.getMessage());
+        }
+    }
+
+    private void getWeatherAi(Long chatId, double lat, double lon) {
+        try {
+            String data = serviceAI.getWeather(lat, lon);
+            sendMessage(chatId, data);
+        } catch (ServiceException e) {
+            LOG.error("An error occurred while generating the weather AI report: {}", e.getMessage());
         }
     }
 
