@@ -59,5 +59,5 @@ docker build -t weatherbot-image .
 ```
 5. <b>Создать и запустить контейнер в фоновом режиме:</b>
 ```
-docker run -d --name weatherbot -p 8080:8080 weatherbot-image
+docker run -d --name --restart=always weatherbot weatherbot-image
 ```
