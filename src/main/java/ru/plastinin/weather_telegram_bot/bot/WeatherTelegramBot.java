@@ -60,7 +60,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             // Погода из json-файла
             getWeather(chatId, latitude, longitude);
             String text = """
-                    🤖 Далее на связи нейросеть GigaChat, и ей есть, что сказать (но это не точно) 👇
+                    🤖 Теперь о погоде расскажет нейросеть GigaChat 👇
                     """;
             sendMessage(chatId, text);
             // Данные из json-файла проанализированы нейросетью
