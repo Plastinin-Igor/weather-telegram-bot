@@ -1,6 +1,7 @@
 package ru.plastinin.weather_telegram_bot.service;
 
 import chat.giga.model.completion.Choice;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.plastinin.weather_telegram_bot.client.GigaChatClientForBot;
@@ -10,6 +11,7 @@ import ru.plastinin.weather_telegram_bot.exception.ServiceException;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class WeatherServiceAIImpl implements WeatherServiceAI {
 
     @Autowired
@@ -31,9 +33,13 @@ public class WeatherServiceAIImpl implements WeatherServiceAI {
                 В ответе не используй разметку markdown
                 
                 """.formatted(jsonString);
-
-        final Choice choice = gigaChatClient.sendRequest(prompt).choices().get(0); // Берём первый выбор
-        return choice.message().content();
+        try {
+            final Choice choice = gigaChatClient.sendRequest(prompt).choices().get(0); // Берём первый выбор
+            return choice.message().content();
+        } catch (Exception e) {
+            log.error("Ошибка при обработке запроса к GigaChat: {}", e.getMessage());
+            throw new ServiceException("Не удалось обработать запрос к сервису GigaChat.");
+        }
     }
 
 }
