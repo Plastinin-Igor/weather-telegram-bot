@@ -24,22 +24,27 @@ public class WeatherServiceAIImpl implements WeatherServiceAI {
     public String getWeather(double lat, double lon) throws ServiceException {
         Optional<String> jsonOptional = client.getOpenWeatherMapData(lat, lon);
         String jsonString = jsonOptional.orElseThrow(() -> new ServiceException("Unable to retrieve data " +
-                                                                                "from weather service Openweathermap."));
-        // Формируем prompt для GigaChat
-        final String prompt = """
-                %s
-                Это данные с сервиса погоды OpenWeather.
-                Проанализируй данные о погоде и представь краткий, лаконичный вывод и как одеваться?
-                В ответе не используй разметку markdown
-                
-                """.formatted(jsonString);
+                "from weather service Open weather map."));
+
+        String prompt = createPrompt(jsonString);
+
         try {
             final Choice choice = gigaChatClient.sendRequest(prompt).choices().get(0); // Берём первый выбор
-            return choice.message().content();
+            return "<b>Нейросеть GigaChat:</b>\n" + choice.message().content();
         } catch (Exception e) {
             log.error("Ошибка при обработке запроса к GigaChat: {}", e.getMessage());
             throw new ServiceException("Не удалось обработать запрос к сервису GigaChat.");
         }
+    }
+
+    private String createPrompt(String jsonString) {
+        return """
+                %s
+                Это данные с сервиса погоды OpenWeather.
+                Проанализируй данные о погоде и представь краткий, лаконичный вывод на 1 (одно) предложение как одеваться.
+                В ответе не используй разметку markdown
+                
+                """.formatted(jsonString);
     }
 
 }

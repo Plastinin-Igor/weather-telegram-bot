@@ -24,20 +24,24 @@ public class WeatherServiceImpl implements WeatherService {
     @Autowired
     private WeatherClient client;
 
-    // private List<WeatherData.Weather> weathers;
-
     @Override
     public String getWeather(double lat, double lon) throws ServiceException {
         List<WeatherData.Weather> weathers;
         Optional<String> jsonOptional = client.getOpenWeatherMapData(lat, lon);
         String jsonString = jsonOptional.orElseThrow(() -> new ServiceException("Unable to retrieve data " +
-                                                                                "from weather service Openweathermap."));
+                "from weather service Openweathermap."));
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             WeatherData weatherData = objectMapper.readValue(jsonString, WeatherData.class);
 
             weathers = List.of(weatherData.getWeather());
             String weatherDescription = getWeatherDescription(weathers);
+
+            // Не всегда есть наименование географического понятия, если нет, то покажем координаты
+            String nameArea = weatherData.getName();
+            if (nameArea == null || nameArea.isBlank()) {
+                nameArea = lat + " " + lon;
+            }
 
             String text = """
                     <b>%s: %s</b>
@@ -46,7 +50,7 @@ public class WeatherServiceImpl implements WeatherService {
                     🤔<i>Ощущается как</i>: <b>%s °C</b>
                     📉<i>Минимальная</i>: <b>%s °C</b>
                     📈️<i>Максимальная</i>: <b>%s °C</b>
-                    🌐<i>Атм Давление</i>: <b>%s мм р.с</b>
+                    🌐<i>Атм давление</i>: <b>%s мм р.ст.</b>
                     💧<i>Влажность</i>: <b>%s %%</b>
                     
                     <i>Ветер</i>: <b>%s%s</b>
@@ -59,7 +63,7 @@ public class WeatherServiceImpl implements WeatherService {
                     """;
 
             return String.format(text,
-                    weatherData.getName(),
+                    nameArea,
                     weatherDescription,
                     weatherData.getMain().getTemp(),
                     weatherData.getMain().getFeelsLike(),
@@ -89,7 +93,7 @@ public class WeatherServiceImpl implements WeatherService {
      */
     private String sunriseSunsetTime(Long sunrise, Long sunset, int timeZoneSeconds) {
         // Формат даты
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
         // Time zone
         // Значение timeZoneSeconds представляет собой смещение временной зоны относительно UTC в секундах.
@@ -156,7 +160,6 @@ public class WeatherServiceImpl implements WeatherService {
 
     /**
      * Ветер по шкале Бофорта
-     *
      */
     private String windDescription(double speed) {
         String text;

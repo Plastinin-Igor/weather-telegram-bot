@@ -3,7 +3,6 @@ package ru.plastinin.weather_telegram_bot.client;
 import chat.giga.client.GigaChatClient;
 import chat.giga.client.auth.AuthClient;
 import chat.giga.client.auth.AuthClientBuilder;
-import chat.giga.model.ModelName;
 import chat.giga.model.Scope;
 import chat.giga.model.completion.ChatMessage;
 import chat.giga.model.completion.ChatMessageRole;
@@ -18,6 +17,9 @@ public class GigaChatClientForBot {
     @Value("${gigachat.apiKey}")
     private String apiKey;
 
+    @Value("${gigachat.model}")
+    private String modelName;
+
     public CompletionResponse sendRequest(String content) {
         GigaChatClient client = GigaChatClient.builder()
                 .verifySslCerts(false)
@@ -30,7 +32,7 @@ public class GigaChatClientForBot {
                 .build();
 
         return client.completions(CompletionRequest.builder()
-                .model(ModelName.GIGA_CHAT_MAX)
+                .model(modelName)
                 .message(ChatMessage.builder()
                         .content(content)
                         .role(ChatMessageRole.USER)

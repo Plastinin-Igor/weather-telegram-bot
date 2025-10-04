@@ -58,13 +58,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
             double longitude = location.getLongitude();
             // Погода из json-файла
             getWeather(chatId, latitude, longitude);
-
-            // Данные из json-файла проанализированы нейросетью
-            //String text = """
-            //        🤖 GigaChat о текущей погоде:
-            //        """;
-            //sendMessage(chatId, text);
-
+            // Совет от нейросети
             getWeatherAi(chatId, latitude, longitude);
             log.info("Geo Location from username: {}, chatId: {}. Location: lat: {}, long: {}",
                     userName, chatId, latitude, longitude);
@@ -125,7 +119,7 @@ public class WeatherTelegramBot extends TelegramLongPollingBot {
                  - Ощущается как 🤔 °C
                  - Минимальная температура 📉 °C
                  - Максимальная температура 📈️ °C
-                 - Атмосферное Давление 🌐 кПа
+                 - Атмосферное Давление 🌐 мм р.ст.
                  - Влажность воздуха 💧 %
                  - Направление и скорость ветра 🌬️
                  - Время восхода и захода Солнца 🌞
