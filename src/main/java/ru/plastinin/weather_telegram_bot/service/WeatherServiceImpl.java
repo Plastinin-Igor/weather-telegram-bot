@@ -124,35 +124,35 @@ public class WeatherServiceImpl implements WeatherService {
     private String windDirectionFromDegrees(int degrees) {
         if (degrees >= 337.5 || degrees <= 22.5) {
             return """
-                    ⬆️ Северный
+                    ⬇️ Северный
                     """;
         } else if (degrees > 22.5 && degrees <= 67.5) {
             return """
-                    ↗️ Северо-Восточный
+                    ↙️ Северо-Восточный
                     """;
         } else if (degrees > 67.5 && degrees <= 112.5) {
             return """
-                    ➡️ Восточный
+                    ⬅️ Восточный
                     """;
         } else if (degrees > 112.5 && degrees <= 157.5) {
             return """
-                    ↘️ Юго-Восточный
+                    ↖️ Юго-Восточный
                     """;
         } else if (degrees > 157.5 && degrees <= 202.5) {
             return """
-                    ⬇️ Южный
+                    ⬆️ Южный
                     """;
         } else if (degrees > 202.5 && degrees <= 247.5) {
             return """
-                    ↙️ Юго-Западный
+                    ↗️ Юго-Западный
                     """;
         } else if (degrees > 247.5 && degrees <= 292.5) {
             return """
-                    ⬅️ Западный
+                    ➡️ Западный
                     """;
         } else if (degrees > 292.5 && degrees <= 337.5) {
             return """
-                    ↖️ Северо-Западный
+                    ↘️ Северо-Западный
                     """;
         } else return null;
     }
